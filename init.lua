@@ -102,13 +102,19 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
+
+-- Change directory to the file in the current window
+vim.opt.autochdir = true
+
+-- Automatically write file if changed
+vim.opt.autowriteall = true
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -897,7 +903,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -937,7 +943,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -964,6 +970,32 @@ require('lazy').setup({
     },
   },
 })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+vim.keymap.set('n', '<Leader>v', '<cmd>:VimwikiIndex<cr>')
+vim.keymap.set('n', '<Leader>md', '<cmd>:InstantMarkdownPreview<cr>')
+vim.keymap.set('n', '<Leader>cp', '<cmd>:w! | make pdf<CR>')
+vim.keymap.set('n', '<Leader>cd', '<cmd>:w! | make docx<CR>')
+vim.keymap.set('n', '<Leader>ch', '<cmd>:w! | make html<CR>')
+vim.keymap.set('n', '<Leader>cc', '<cmd>:w! | !compiler "%:p"<CR>')
+vim.keymap.set('n', '<Leader>p', '<cmd>:!opout "%:p"<CR>')
+vim.keymap.set('n', '<leader>g', '<cmd>:Goyo | set bg=dark | set linebreak<CR>')
+vim.keymap.set('n', '<leader>a', '<cmd>!setsid autocmp % &<CR>')
+vim.keymap.set('n', '<leader>o', '<cmd>:setlocal spell! spelllang=pt_br<CR>')
+local job_id = 0
+vim.keymap.set('n', '<leader>st', function()
+  vim.cmd.vnew()
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 5)
+
+  job_id = vim.bo.chanel
+end)
+-- vim.keymap.set('n', '<space>py', function()
+--  vim.fn.chansend(job_id, { 'ls -al \r\n' })
+--end)
+--vim.api.nvim.create.autocmd({ 'BuffRead', 'BuffNewFile' }, {
+--  pattern = { '/tmp/calcurse*', '~/.calcurse/notes/*' },
+--  command = 'set filetype=markdown',
+--})
